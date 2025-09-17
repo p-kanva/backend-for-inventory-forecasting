@@ -1,0 +1,4 @@
+com\example\inventory\order\OrderServiceTest.class
+com\example\inventory\security\JwtServiceTest.class
+com\example\inventory\llm\MockLLMServiceTest.class
+com\example\inventory\forecast\ForecastServiceTest.class
