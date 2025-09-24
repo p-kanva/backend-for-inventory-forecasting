@@ -61,9 +61,11 @@ spring:
   jpa:
     hibernate:
       ddl-auto: update
+
+      
 3. Build & Run
 bash
-Copy code
+
 mvn clean install
 mvn spring-boot:run
 The service will start at: http://localhost:8080
