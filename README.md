@@ -77,5 +77,7 @@ curl -X POST http://localhost:8080/api/llm/parse -H "Authorization: Bearer $TOKE
 ## Future Improvements
 
 Add ARIMA / ML models for advanced forecasting
+
 Create frontend dashboard for visualization
+
 Implement role-based access control
