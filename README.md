@@ -27,17 +27,17 @@ It uses **JWT authentication**, **MySQL** for persistence, and is fully tested w
 src/
 ├── main/
 │ ├── java/com/example/inventory/
-│ │ ├── controller/     # REST controllers
-│ │ ├── service/        # Business logic
-│ │ ├── model/          # Entities
-│ │ └── repository/     # Data access
+│ │ ├── controller/ # REST controllers
+│ │ ├── service/ # Business logic
+│ │ ├── model/ # Entities
+│ │ └── repository/ # Data access
 │ └── resources/
-│ ├── application.yml   # Configurations
-│ └── schema.sql        # DB setup (if any)
-└── test/               # Unit & integration tests
+│ ├── application.yml # Configurations
+│ └── schema.sql # DB setup (if any)
+└── test/ # Unit & integration tests
 
 yaml
-
+Copy code
 
 ---
 
@@ -47,7 +47,6 @@ yaml
 ```bash
 git clone https://github.com/p-kanva/inventory-forecasting-service.git
 cd inventory-forecasting-service
-
 2. Configure Database
 Update application.yml with your MySQL username & password:
 
@@ -61,8 +60,6 @@ spring:
   jpa:
     hibernate:
       ddl-auto: update
-
-      
 3. Build & Run
 bash
 
@@ -81,10 +78,12 @@ POST	/purchase-orders/auto	Auto-generate purchase order
 
 ✅ Testing
 Run tests with:
-bash
-mvn test
 
+bash
+
+mvn test
 Includes:
+
 Unit tests with Mockito
 
 Integration tests with Spring Boot Test
