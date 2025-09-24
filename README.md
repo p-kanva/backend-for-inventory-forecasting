@@ -1,77 +1,94 @@
-# Inventory Forecasting Service (Spring Boot + MySQL + JWT + JPA + Tests)
+# 📦 Inventory Forecasting Service
 
-This project is a **backend service for inventory forecasting**.  
-It helps businesses manage stock levels by recording sales, forecasting demand, and automatically generating purchase orders when inventory is low.  
-The system is built with **Spring Boot**, uses **JWT authentication** for security, and stores data in **MySQL**.  
+A **Spring Boot backend application** that helps businesses manage stock levels, forecast demand, and auto-generate purchase orders when inventory is low.  
+It uses **JWT authentication**, **MySQL** for persistence, and is fully tested with **JUnit + Mockito**.
 
-It includes modules for:
-- User authentication & authorization
-- Product management
-- Sales tracking
-- Forecast generation (moving average model)
-- Purchase order automation
-- Logging & audit trails
-- Offline LLM-based text parsing (mock service for testing)
+---
 
-The service is fully tested with **JUnit + Mockito**.
+## 🚀 Features
+- **User Authentication**: Secure APIs with JWT.
+- **Product Management**: Add, update, and manage products.
+- **Sales Tracking**: Maintain sales history for accurate forecasting.
+- **Demand Forecasting**: Uses Moving Average to predict stock requirements.
+- **Purchase Order Automation**: Auto-generate purchase orders when stock falls below thresholds.
 
-## Run locally (fastest path)
-1. Create DB:
-   ```sql
-   CREATE DATABASE IF NOT EXISTS inventorydb;
-   ```
-2. Edit `src/main/resources/application.properties`:
-   - Set `spring.datasource.username` and `spring.datasource.password` for your MySQL.
-   - Replace `app.jwt.secret` with your own Base64 key:
-     ```bash
-     openssl rand -base64 32
-     ```
-3. Start the app:
-   ```bash
-   mvn spring-boot:run
-   ```
+---
 
-## Smoke test (curl)
+## 🛠️ Tech Stack
+- **Backend**: Java 17, Spring Boot 3
+- **Security**: Spring Security, JWT
+- **Database**: MySQL
+- **Testing**: JUnit 5, Mockito
+- **Build Tool**: Maven
+
+---
+
+## 📂 Project Structure
+src/
+├── main/
+│ ├── java/com/example/inventory/
+│ │ ├── controller/     # REST controllers
+│ │ ├── service/        # Business logic
+│ │ ├── model/          # Entities
+│ │ └── repository/     # Data access
+│ └── resources/
+│ ├── application.yml   # Configurations
+│ └── schema.sql        # DB setup (if any)
+└── test/               # Unit & integration tests
+
+yaml
+
+
+---
+
+## ⚡ Getting Started
+
+### 1. Clone the repository
 ```bash
-# Register ADMIN
-curl -X POST http://localhost:8080/api/auth/register -H "Content-Type: application/json" -d '{"username":"admin","email":"admin@example.com","password":"password","role":"ADMIN"}'
+git clone https://github.com/p-kanva/inventory-forecasting-service.git
+cd inventory-forecasting-service
 
-# Login
-TOKEN=$(curl -s -X POST http://localhost:8080/api/auth/login -H "Content-Type: application/json" -d '{"username":"admin","password":"password"}' | jq -r .token)
+2. Configure Database
+Update application.yml with your MySQL username & password:
 
-# Create product (ADMIN)
-curl -X POST http://localhost:8080/api/products -H "Authorization: Bearer $TOKEN" -H "Content-Type: application/json" -d '{"name":"Blue Office Chair","category":"Furniture","currentStock":10,"reorderThreshold":20,"leadTimeDays":2}'
+yaml
 
-# Record a sale (recomputes forecast, decrements stock)
-curl -X POST http://localhost:8080/api/sales -H "Authorization: Bearer $TOKEN" -H "Content-Type: application/json" -d '{"productId":1,"quantity":5,"location":"West warehouse","saleDate":"2025-07-15"}'
+spring:
+  datasource:
+    url: jdbc:mysql://localhost:3306/inventorydb
+    username: root
+    password: yourpassword
+  jpa:
+    hibernate:
+      ddl-auto: update
+3. Build & Run
+bash
+Copy code
+mvn clean install
+mvn spring-boot:run
+The service will start at: http://localhost:8080
 
-# Get product with latest forecast
-curl http://localhost:8080/api/products/1 -H "Authorization: Bearer $TOKEN"
+🔑 API Endpoints (Sample)
+Method	Endpoint	Description
+POST	/auth/register	Register a new user
+POST	/auth/login	User login (JWT token)
+GET	/products	List all products
+POST	/products	Add a new product
+GET	/forecast/{productId}	Get demand forecast
+POST	/purchase-orders/auto	Auto-generate purchase order
 
-# List forecasts
-curl "http://localhost:8080/api/forecasts?start=2025-07-01&end=2025-08-31" -H "Authorization: Bearer $TOKEN"
+✅ Testing
+Run tests with:
+bash
+mvn test
 
-# Auto-generate purchase orders (ADMIN)
-curl -X POST http://localhost:8080/api/orders/auto -H "Authorization: Bearer $TOKEN"
+Includes:
+Unit tests with Mockito
 
-# Receive order
-curl -X PUT http://localhost:8080/api/orders/1/receive -H "Authorization: Bearer $TOKEN"
+Integration tests with Spring Boot Test
 
-# LLM parse (offline mock)
-curl -X POST http://localhost:8080/api/llm/parse -H "Authorization: Bearer $TOKEN" -H "Content-Type: application/json" -d '{"data":"Sold 45 units of blue office chairs, Furniture category, on July 15th to the West warehouse."}'
-```
+📌 Future Improvements
 
-## What "offline LLM" means
-- We included `MockLLMService` which **does not call the internet**. It uses simple rules/regex to pull fields from messy text so you can test end-to-end locally.
-- A real LLM (OpenAI/HF) would require an API key and HTTP calls. That's more accurate but needs internet and handling latency/errors/costs. There's a placeholder file `OpenAILLMService.java` indicating where that would go.
-
-## Modules
-- **Auth**: JWT, roles (ADMIN/USER), logout token blacklist
-- **Products**: CRUD-lite (create, fetch with latest forecast)
-- **Sales**: record sales (triggers forecast)
-- **Forecasts**: moving average over last N days (`app.forecast.windowDays`)
-- **Orders**: auto-generate when below threshold; receive to add stock
-- **Logs**: each HTTP call recorded with correlation id
-
-## Tests
-- JUnit + Mockito: `ForecastServiceTest`, `OrderServiceTest`, `MockLLMServiceTest`, `JwtServiceTest`
+Add ARIMA / ML models for advanced forecasting
+Create frontend dashboard for visualization
+Implement role-based access control
